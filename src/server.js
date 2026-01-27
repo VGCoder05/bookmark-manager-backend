@@ -1,0 +1,83 @@
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+const { errorHandler } = require('./middleware/errorHandler');
+const notFound = require('./middleware/notFound');
+
+// Load environment variables
+dotenv.config();
+
+// Initialize express app
+const app = express();
+
+// Connect to database
+connectDB();
+
+// ============================================
+// MIDDLEWARE
+// ============================================
+
+// Enable CORS for all origins (configure for production)
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL 
+    : '*',
+  credentials: true,
+}));
+
+// Parse JSON bodies
+app.use(express.json());
+
+// Parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
+// Request logging in development
+if (process.env.NODE_ENV === 'development') {
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// ============================================
+// ROUTES
+// ============================================
+
+// Health check route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: '🚀 Bookmark Manager API is running!',
+    version: '1.0.0',
+    endpoints: {
+      bookmarks: '/api/bookmarks',
+      tags: '/api/tags',
+    },
+  });
+});
+
+// API Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'API is healthy',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Mount routers
+app.use('/api/bookmarks', require('./routes/bookmarkRoutes'));
+app.use('/api/tags', require('./routes/tagRoutes'));
+
+// ============================================
+// ERROR HANDLING
+// ============================================
+
+// Handle 404 errors
+app.use(notFound);
+
+// Global error handler
+app.use(errorHandler);
+
+module.exports = app;
