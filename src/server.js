@@ -30,6 +30,8 @@ app.use(cors({
   // credentials: true,
 }));
 
+console.log("Entered sever.js");
+
 // Parse JSON bodies
 app.use(express.json());
 
