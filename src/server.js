@@ -20,10 +20,14 @@ connectDB();
 
 // Enable CORS for all origins (configure for production)
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : '*',
-  credentials: true,
+  // for vercel (serverless)
+    origin: process.env.FRONTEND_URL 
+
+  // for Render or other 
+  // origin: process.env.NODE_ENV === 'production' 
+  //   ? process.env.FRONTEND_URL 
+  //   : '*',
+  // credentials: true,
 }));
 
 // Parse JSON bodies
@@ -51,14 +55,14 @@ app.get('/', (req, res) => {
     message: '🚀 Bookmark Manager API is running!',
     version: '1.0.0',
     endpoints: {
-      bookmarks: '/api/bookmarks',
-      tags: '/api/tags',
+      bookmarks: '/bookmarks',
+      tags: '/tags',
     },
   });
 });
 
 // API Health check
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({
     success: true,
     message: 'API is healthy',
@@ -67,8 +71,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // Mount routers
-app.use('/api/bookmarks', require('./routes/bookmarkRoutes'));
-app.use('/api/tags', require('./routes/tagRoutes'));
+app.use('/bookmarks', require('./routes/bookmarkRoutes'));
+app.use('/tags', require('./routes/tagRoutes'));
 
 // ============================================
 // ERROR HANDLING
