@@ -74,6 +74,10 @@ app.get('/health', (req, res) => {
 app.use('/bookmarks', require('./routes/bookmarkRoutes'));
 app.use('/tags', require('./routes/tagRoutes'));
 
+app.get('/tags-test', (req, res) => {
+  res.json({ ok: true });
+});
+
 // ============================================
 // ERROR HANDLING
 // ============================================
