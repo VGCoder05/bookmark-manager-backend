@@ -30,7 +30,6 @@ app.use(cors({
   // credentials: true,
 }));
 
-console.log("Entered sever.js");
 
 // Parse JSON bodies
 app.use(express.json());
@@ -38,11 +37,6 @@ app.use(express.json());
 // Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Request logging in development
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
-});
 
 // ============================================
 // ROUTES
@@ -55,14 +49,14 @@ app.get('/', (req, res) => {
     message: '🚀 Bookmark Manager API is running!',
     version: '1.0.0',
     endpoints: {
-      bookmarks: '/bookmarks',
-      tags: '/tags',
+      bookmarks: '/api/bookmarks',
+      tags: '/api/tags',
     },
   });
 });
 
 // API Health check
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({
     success: true,
     message: 'API is healthy',
@@ -71,12 +65,9 @@ app.get('/health', (req, res) => {
 });
 
 // Mount routers
-app.use('/bookmarks', require('./routes/bookmarkRoutes'));
-app.use('/tags', require('./routes/tagRoutes'));
+app.use('/api/bookmarks', require('./routes/bookmarkRoutes'));
+app.use('/api/tags', require('./routes/tagRoutes'));
 
-app.get('/tags-test', (req, res) => {
-  res.json({ ok: true });
-});
 
 // ============================================
 // ERROR HANDLING
