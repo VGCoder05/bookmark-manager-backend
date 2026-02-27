@@ -13,11 +13,19 @@ const bookmarkSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       validate: {
-        validator: function (v) {
-          // Improved regex that accounts for queries, fragments, and special characters like @
-          const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-@?=&%#+]*)*\/?$/i;
-          return urlRegex.test(v);
-        },
+      validator: function (v) {
+        try {
+          // 1. Attempt to parse the string using the native URL constructor
+          const parsedUrl = new URL(v);
+          
+          // 2. Ensure the URL is a standard web link (HTTP or HTTPS)
+          return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+          
+        } catch (err) {
+          // 3. If an error is thrown, the string was not a valid URL
+          return false;
+        }
+      },
         message: 'Please enter a valid URL',
       },
     },
