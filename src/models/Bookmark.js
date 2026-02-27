@@ -14,8 +14,8 @@ const bookmarkSchema = new mongoose.Schema(
       trim: true,
       validate: {
         validator: function (v) {
-          // Basic URL validation regex
-          const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i;
+          // Improved regex that accounts for queries, fragments, and special characters like @
+          const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-@?=&%#+]*)*\/?$/i;
           return urlRegex.test(v);
         },
         message: 'Please enter a valid URL',
